@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Attendance Video Recognition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, #e9ecf5 0%, #f6f9fc 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .container {
+        background: #fff;
+        margin-top: 40px;
+        padding: 34px 32px 28px 32px;
+        border-radius: 16px;
+        box-shadow: 0 12px 32px rgba(52, 85, 155, 0.11);
+        width: 540px;
+        max-width: 97vw;
+        animation: fadeIn 0.7s;
+        border-bottom: 3px solid #3386e2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      h2 {
+        color: #235ca7;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 23px;
+        border-bottom: 2px solid #e9ecf5;
+        padding-bottom: 10px;
+      }
+      .message {
+        color: #e53a40;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 20px;
+        background: #fbe9ec;
+        border-radius: 7px;
+        padding: 12px;
+        border: 1.5px solid #e2b8b8;
+      }
+      p {
+        font-size: 15px;
+        color: #444;
+        text-align: center;
+        margin-bottom: 18px;
+      }
+      img {
+        display: block;
+        border: 3px solid #3386e2;
+        border-radius: 14px;
+        margin: 16px auto 10px auto;
+        box-shadow: 0 4px 19px rgba(52, 134, 226, 0.13);
+        width: 97%;
+        max-width: 510px;
+        height: auto;
+        aspect-ratio: 4 / 3;
+        background: #eef2fa;
+      }
+      form {
+        margin-top: 14px;
+        text-align: center;
+        width: 100%;
+      }
+      button[type="submit"] {
+        background: linear-gradient(90deg, #235ca7 7%, #3386e2 100%);
+        border: none;
+        padding: 13px 0;
+        border-radius: 11px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.09rem;
+        cursor: pointer;
+        letter-spacing: 0.06em;
+        width: 94%;
+        transition: background 0.14s, box-shadow 0.13s, transform 0.13s;
+        box-shadow: 0 1px 10px rgba(52, 134, 226, 0.09);
+      }
+      button[type="submit"]:hover {
+        background: linear-gradient(90deg, #1d447d 10%, #235ca7 100%);
+        transform: scale(1.03);
+        box-shadow: 0 5px 21px rgba(52, 134, 226, 0.14);
+      }
+      a {
+        color: #3386e2;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+      a:hover {
+        color: #195a8b;
+        text-decoration: underline;
+      }
+      @media (max-width: 650px) {
+        .container {
+          width: 99vw;
+          padding: 22px 2vw 18px 2vw;
+        }
+        h2 {
+          font-size: 1.16rem;
+        }
+        img {
+          width: 99vw;
+          max-width: 96vw;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Attendance Video Recognition</h2>
+      {% set session_id = session.get('attendance_session_id') %} {% if not
+      session_id %}
+      <p class="message">
+        No active attendance session found.<br />
+        Please start a session from the
+        <a href="{{ url_for('faculty.faculty_dashboard') }}"
+          >faculty dashboard</a
+        >.
+      </p>
+      {% else %}
+      <img
+        src="{{ url_for('attendance.video_feed') }}?session_id={{ session_id }}"
+        width="640"
+        height="480"
+        alt="Video Stream"
+      />
+      <p>
+        If video does not appear, please check your server console and browser
+        developer console for errors.
+      </p>
+      <form method="POST" action="{{ url_for('faculty.start_stop_session') }}">
+        <input
+          type="hidden"
+          name="subject_id"
+          value="{{ session.get('current_subject_id', '') }}"
+        />
+        <button type="submit" name="action" value="stop">
+          Stop Attendance Session
+        </button>
+      </form>
+      <script>
+        const sessionId = "{{ session_id }}";
+        function checkSessionEnded() {
+          fetch("/attendance/session_status?session_id=" + sessionId)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.ended) {
+                alert(
+                  "Attendance session has ended. Please close this window."
+                );
+              }
+            })
+            .catch((err) =>
+              console.error("Error checking session status:", err)
+            );
+        }
+        setInterval(checkSessionEnded, 3000);
+      </script>
+      {% endif %}
+    </div>
+  </body>
+</html>

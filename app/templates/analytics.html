@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Face Recognition Analytics</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container mt-5">
+      <h1 class="mb-4 text-center">Face Recognition Analytics</h1>
+
+      <div class="text-center mb-4">
+        <img
+          src="{{ url_for('static', filename='confusion_matrix.png') }}"
+          alt="Confusion Matrix"
+          class="img-fluid mb-3"
+          style="max-width: 600px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.2)"
+        />
+      </div>
+
+      <div class="card p-3 mb-5 mx-auto" style="max-width: 600px">
+        <h4>Evaluation Metrics</h4>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <strong>Accuracy:</strong> {{ accuracy }}
+          </li>
+          <li class="list-group-item">
+            <strong>Precision:</strong> {{ precision }}
+          </li>
+          <li class="list-group-item"><strong>Recall:</strong> {{ recall }}</li>
+          <li class="list-group-item">
+            <strong>F1 Score:</strong> {{ f1_score }}
+          </li>
+        </ul>
+      </div>
+
+      <div class="text-center">
+        <a href="{{ url_for('main.landing_page') }}" class="btn btn-primary">
+          Back to Home
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

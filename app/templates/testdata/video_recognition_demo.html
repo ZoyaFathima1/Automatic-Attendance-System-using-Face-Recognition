@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CCTV Face Recognition Demo</title>
+    <style>
+      /* existing styles here */
+      #stream {
+        border-radius: 10px;
+        max-width: 100%;
+        border: 2px solid #3b82f6;
+        display: block;
+        margin: 0 auto;
+      }
+      .controls {
+        text-align: center;
+        margin-top: 15px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        margin: 0 10px;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #2563eb;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CCTV Video: Face Recognition Demo</h1>
+    <div class="video-container">
+      <img
+        id="stream"
+        src="{{ url_for('testdata.video_demo_feed') }}"
+        alt="Face recognition video stream"
+      />
+    </div>
+    <div class="controls">
+      <button onclick="startStream()">Start</button>
+      <button onclick="pauseStream()">Pause</button>
+    </div>
+    <div
+      class="desc"
+      style="
+        text-align: center;
+        font-size: 1.1rem;
+        color: #445566;
+        margin-top: 10px;
+      "
+    >
+      Automatic detection and USN annotation for faces. ("Unknown" if not
+      recognized)
+    </div>
+
+    <script>
+      const streamImg = document.getElementById("stream");
+
+      let isStreaming = true;
+
+      function pauseStream() {
+        if (isStreaming) {
+          streamImg.src = "";
+          isStreaming = false;
+        }
+      }
+
+      function startStream() {
+        if (!isStreaming) {
+          streamImg.src = "{{ url_for('testdata.video_demo_feed') }}";
+          isStreaming = true;
+        }
+      }
+    </script>
+  </body>
+</html>

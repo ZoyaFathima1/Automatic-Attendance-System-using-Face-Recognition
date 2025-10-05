@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Faculty Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #e9f0fb 0%, #f9fbff 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .container {
+        background: #ffffff;
+        margin-top: 60px;
+        padding: 36px 40px 28px 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 32px rgba(52, 55, 70, 0.12);
+        width: 360px;
+        animation: fadeIn 0.7s ease;
+        border-bottom: 3px solid #4a90e2;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(25px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      h1 {
+        text-align: center;
+        color: #205295;
+        font-weight: 800;
+        margin-bottom: 35px;
+        font-size: 1.65rem;
+        letter-spacing: 0.06em;
+        border-bottom: 2px solid #e0e7f1;
+        padding-bottom: 10px;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        font-weight: 600;
+        color: #3b475e;
+        margin-bottom: 8px;
+        font-size: 1rem;
+      }
+      input[type="text"],
+      input[type="password"] {
+        padding: 11px 13px;
+        font-size: 1rem;
+        border: 2px solid #d3d9e8;
+        border-radius: 9px;
+        margin-bottom: 20px;
+        background-color: #f5f8fe;
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+      input[type="text"]:focus,
+      input[type="password"]:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 10px rgba(74, 144, 226, 0.35);
+        outline: none;
+      }
+      button[type="submit"] {
+        background: linear-gradient(90deg, #4a90e2 4%, #357abd 100%);
+        padding: 13px 0;
+        border-radius: 14px;
+        border: none;
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        letter-spacing: 0.05em;
+        transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
+        box-shadow: 0 2px 15px rgba(53, 122, 189, 0.4);
+      }
+      button[type="submit"]:hover {
+        background: linear-gradient(90deg, #2a5d9f 5%, #3e7ccf 100%);
+        box-shadow: 0 5px 30px rgba(58, 122, 206, 0.6);
+        transform: scale(1.05);
+      }
+      ul.flash-messages {
+        color: #d9534f;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-left: 20px;
+      }
+      p.note {
+        font-size: 0.91rem;
+        color: #667491;
+        text-align: center;
+        margin-top: 30px;
+      }
+      p.note strong {
+        color: #4a90e2;
+        font-weight: 700;
+      }
+      @media (max-width: 400px) {
+        .container {
+          width: 92vw;
+          padding: 25px 6vw 20px 6vw;
+        }
+        h1 {
+          font-size: 1.4rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Faculty Login</h1>
+
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <ul class="flash-messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+
+      <form method="POST" action="{{ url_for('faculty.faculty_login') }}">
+        <label for="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          placeholder="Enter your username"
+          required
+        />
+
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+
+        <button type="submit">Login</button>
+      </form>
+
+      <p class="note">
+        Don't have an account? <br />
+        <strong>Please contact admin to create a faculty account.</strong>
+      </p>
+    </div>
+  </body>
+</html>

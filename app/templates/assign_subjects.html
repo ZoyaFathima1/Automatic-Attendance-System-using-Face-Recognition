@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Assign Subjects to {{ faculty.name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, #eaeef3 0%, #f4f6fa 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .container {
+        background: #fff;
+        margin-top: 44px;
+        padding: 36px 40px 30px 40px;
+        border-radius: 16px;
+        box-shadow: 0 12px 36px rgba(52, 58, 64, 0.13);
+        width: 410px;
+        animation: fadeIn 0.6s;
+        border-bottom: 3px solid #3a91eb;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(32px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      h1 {
+        text-align: center;
+        color: #196fb3;
+        margin-bottom: 32px;
+        font-weight: 700;
+        font-size: 1.42rem;
+        letter-spacing: 0.04em;
+        border-bottom: 2px solid #eaeef3;
+        padding-bottom: 9px;
+      }
+      form {
+        margin-top: 10px;
+      }
+      .subject-list {
+        margin-bottom: 30px;
+        padding-bottom: 6px;
+      }
+      .subject-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        padding: 2px 0;
+      }
+      .subject-check input[type="checkbox"] {
+        accent-color: #2176ae;
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+        cursor: pointer;
+        transition: accent-color 0.2s;
+      }
+      .subject-check label {
+        font-weight: 600;
+        color: #244066;
+        letter-spacing: 0.06em;
+        cursor: pointer;
+        font-size: 1rem;
+        margin: 0;
+      }
+      .subject-check input[type="checkbox"]:hover {
+        accent-color: #358ce1;
+      }
+      button[type="submit"] {
+        width: 100%;
+        background: linear-gradient(90deg, #2176ae 0%, #3a91eb 100%);
+        border: none;
+        padding: 13px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.08rem;
+        cursor: pointer;
+        letter-spacing: 0.07em;
+        transition: background 0.2s, box-shadow 0.2s, transform 0.21s;
+        box-shadow: 0 2px 18px rgba(58, 145, 235, 0.1);
+      }
+      button[type="submit"]:hover {
+        background: linear-gradient(90deg, #195a8b 1%, #3284db 100%);
+        box-shadow: 0 6px 26px rgba(33, 118, 174, 0.16);
+        transform: scale(1.03);
+      }
+      .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 22px;
+        color: #3a91eb;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.97rem;
+        transition: color 0.3s;
+      }
+      .back-link:hover {
+        color: #195a8b;
+        text-decoration: underline;
+      }
+      @media (max-width: 550px) {
+        .container {
+          width: 96vw;
+          min-width: 210px;
+          padding: 24px 7vw 18px 7vw;
+        }
+        h1 {
+          font-size: 1.17rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Assign Subjects to {{ faculty.name }}</h1>
+      <form
+        method="POST"
+        action="{{ url_for('admin.assign_subjects', faculty_id=faculty.id) }}"
+      >
+        <div class="subject-list">
+          {% for subject in subjects %}
+          <div class="subject-check">
+            <input
+              type="checkbox"
+              name="subjects"
+              value="{{ subject.id }}"
+              id="subject_{{ subject.id }}"
+            />
+            <label for="subject_{{ subject.id }}">{{ subject.name }}</label>
+          </div>
+          {% endfor %}
+        </div>
+        <button type="submit">Assign Selected Subjects</button>
+      </form>
+      <a href="{{ url_for('admin.admin_dashboard') }}" class="back-link">
+        Back to Admin Dashboard
+      </a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Add Subject</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #eaeef3 0%, #f4f6fa 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      }
+      .container {
+        background: #ffffff;
+        margin-top: 46px;
+        padding: 32px 36px 28px 36px;
+        border-radius: 14px;
+        box-shadow: 0 10px 32px rgba(52, 58, 64, 0.11);
+        width: 340px;
+        animation: fadeIn 0.7s;
+        border-bottom: 3px solid #3a91eb;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      h1 {
+        text-align: center;
+        color: #2176ae;
+        margin-bottom: 28px;
+        font-weight: 700;
+        letter-spacing: 0.055em;
+        font-size: 1.47rem;
+        border-bottom: 2px solid #eaeef3;
+        padding-bottom: 8px;
+      }
+      label {
+        font-weight: 600;
+        color: #444;
+        font-size: 1rem;
+        margin-bottom: 7px;
+        display: block;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 10px 14px;
+        margin-bottom: 26px;
+        border: 2.2px solid #e4e8ee;
+        border-radius: 9px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        background: #f7fbff;
+      }
+      input[type="text"]:focus {
+        border-color: #3a91eb;
+        box-shadow: 0 0 10px rgba(58, 145, 235, 0.12);
+        outline: none;
+      }
+      input[type="text"]::placeholder {
+        color: #a0adc5;
+        opacity: 1;
+        font-style: italic;
+      }
+      button[type="submit"] {
+        width: 100%;
+        background: linear-gradient(90deg, #2176ae 0%, #3a91eb 100%);
+        border: none;
+        padding: 12px;
+        border-radius: 11px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.08rem;
+        cursor: pointer;
+        letter-spacing: 0.07em;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 16px rgba(58, 145, 235, 0.08);
+      }
+      button[type="submit"]:hover {
+        background: linear-gradient(90deg, #195a8b 5%, #3284db 100%);
+        transform: scale(1.03);
+        box-shadow: 0 5px 24px rgba(33, 118, 174, 0.18);
+      }
+      .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #3a91eb;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.97rem;
+        transition: color 0.3s;
+      }
+      .back-link:hover {
+        color: #195a8b;
+        text-decoration: underline;
+      }
+      @media (max-width: 500px) {
+        .container {
+          width: 96vw;
+          min-width: 220px;
+          padding: 22px 11vw;
+        }
+        h1 {
+          font-size: 1.22rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Add New Subject</h1>
+      <form method="POST" action="{{ url_for('admin.add_subject') }}">
+        <label for="name">Subject Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Enter subject name"
+          required
+        />
+        <button type="submit">Add Subject</button>
+      </form>
+      <a href="{{ url_for('admin.admin_dashboard') }}" class="back-link">
+        Back to Admin Dashboard
+      </a>
+    </div>
+  </body>
+</html>

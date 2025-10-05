@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Capture Student Images - {{ usn }}</title>
+    <style>
+      #video {
+        border: 1px solid black;
+        width: 400px;
+        height: 300px;
+      }
+      #captured-images img {
+        width: 80px;
+        height: 60px;
+        margin: 5px;
+        border: 1px solid gray;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Capture Images for Student: {{ usn }}</h2>
+
+    <video id="video" autoplay></video><br />
+
+    <button id="start-btn">Start Camera</button>
+    <button id="capture-btn" disabled>Capture Image</button>
+    <button id="retake-btn" disabled>Retake Last</button>
+    <button id="finish-btn" disabled>Finish Capture</button>
+
+    <div>
+      <h3>Captured Images: <span id="image-count">0</span></h3>
+      <div id="captured-images"></div>
+    </div>
+
+    <script>
+      const video = document.getElementById("video");
+      const startBtn = document.getElementById("start-btn");
+      const captureBtn = document.getElementById("capture-btn");
+      const retakeBtn = document.getElementById("retake-btn");
+      const finishBtn = document.getElementById("finish-btn");
+      const capturedImagesDiv = document.getElementById("captured-images");
+      const imageCountSpan = document.getElementById("image-count");
+
+      let stream;
+      let capturedImages = [];
+      let currentImageIndex = -1;
+
+      startBtn.onclick = async () => {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+        video.srcObject = stream;
+        captureBtn.disabled = false;
+        startBtn.disabled = true;
+      };
+
+      captureBtn.onclick = () => {
+        // No cap on maximum images
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = canvas.toDataURL("image/jpeg");
+        capturedImages.push(imageData);
+        currentImageIndex = capturedImages.length - 1;
+        renderCapturedImages();
+        retakeBtn.disabled = capturedImages.length === 0;
+        finishBtn.disabled = capturedImages.length === 0;
+      };
+
+      retakeBtn.onclick = () => {
+        if (currentImageIndex < 0) return;
+        if (confirm("Retake last captured image?")) {
+          capturedImages.pop();
+          currentImageIndex = capturedImages.length - 1;
+          renderCapturedImages();
+          captureBtn.disabled = false;
+          finishBtn.disabled = capturedImages.length === 0;
+          retakeBtn.disabled = capturedImages.length === 0;
+        }
+      };
+
+      finishBtn.onclick = async () => {
+        if (capturedImages.length === 0) {
+          alert("No images to save.");
+          return;
+        }
+
+        // Send images to server, one by one
+        for (let i = 0; i < capturedImages.length; i++) {
+          let response = await fetch(
+            '{{ url_for("admin.save_image", usn=usn) }}',
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                image: capturedImages[i],
+                img_number: i + 1,
+              }),
+            }
+          );
+
+          let result = await response.json();
+          if (result.status !== "success") {
+            alert("Failed to save image " + (i + 1));
+            return;
+          }
+        }
+        alert("Images saved successfully!");
+        if (stream) {
+          stream.getTracks().forEach((track) => track.stop());
+        }
+        window.location.href = "{{ url_for('admin.admin_dashboard') }}";
+      };
+
+      function renderCapturedImages() {
+        capturedImagesDiv.innerHTML = "";
+        imageCountSpan.textContent = capturedImages.length;
+        capturedImages.forEach((imgData) => {
+          const img = document.createElement("img");
+          img.src = imgData;
+          capturedImagesDiv.appendChild(img);
+        });
+      }
+    </script>
+  </body>
+</html>
