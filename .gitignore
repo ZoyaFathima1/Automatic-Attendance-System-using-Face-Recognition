@@ -30,3 +30,7 @@ Thumbs.db
 
 # 📓 Jupyter Notebook Cache (if any)
 .ipynb_checkpoints/
+
+# Configuration and secrets
+config.py
+*.env
