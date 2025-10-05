@@ -130,7 +130,10 @@ def norm_usn(u: str) -> str:
 @admin_bp.route('/')
 def admin_dashboard():
     students = Student.query.all()
-    return render_template('admin.html', students=students)
+    subjects = Subject.query.all()         # For delete subject/select subject
+    faculties = Faculty.query.all()        # For delete faculty/select faculty
+    return render_template('admin.html', students=students, subjects=subjects, faculties=faculties)
+
 
 # Login
 @admin_bp.route('/login', methods=['GET', 'POST'])
@@ -255,6 +258,36 @@ def add_subject():
         return redirect(url_for('admin.admin_dashboard'))
     return render_template('add_subject.html')
 
+#delete subject (also cleans assignments and attendance)
+@admin_bp.route('/delete_subject', methods=['POST'])
+def delete_subject():
+    subject_id = request.form.get('subject_id')
+    if not subject_id:
+        flash("Please provide a subject to delete.", "error")
+        return redirect(url_for('admin.admin_dashboard'))
+
+    subject = Subject.query.get(subject_id)
+    if not subject:
+        flash("No subject found.", "error")
+        return redirect(url_for('admin.admin_dashboard'))
+
+    try:
+        # Remove all assignments to faculty
+        FacultySubject.query.filter_by(subject_id=subject_id).delete()
+        # Remove ALL attendance sessions/records for this subject
+        sessions = AttendanceSession.query.filter_by(subject_id=subject_id).all()
+        for s in sessions:
+            AttendanceRecord.query.filter_by(session_id=s.id).delete()
+            db.session.delete(s)
+        db.session.delete(subject)
+        db.session.commit()
+        flash(f"Subject {subject.name} deleted with all related assignments and attendance.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Error deleting subject: " + str(e), "error")
+    return redirect(url_for('admin.admin_dashboard'))
+
+
 # Assign subjects to faculty
 @admin_bp.route('/assign_subjects/<int:faculty_id>', methods=['GET', 'POST'])
 def assign_subjects(faculty_id):
@@ -295,8 +328,36 @@ def add_faculty():
         return redirect(url_for('admin.assign_subjects', faculty_id=new_faculty.id))
     return render_template('add_faculty.html')
 
-# Delete student (also cleans files and CSV)
+#delete faculty (also cleans assignments and attendance)
+@admin_bp.route('/delete_faculty', methods=['POST'])
+def delete_faculty():
+    faculty_id = request.form.get('faculty_id')
+    if not faculty_id:
+        flash("Please provide a faculty ID to delete.", "error")
+        return redirect(url_for('admin.admin_dashboard'))
 
+    faculty = Faculty.query.get(faculty_id)
+    if not faculty:
+        flash("No faculty found.", "error")
+        return redirect(url_for('admin.admin_dashboard'))
+
+    try:
+        # Remove subject assignments
+        FacultySubject.query.filter_by(faculty_id=faculty_id).delete()
+        # Remove sessions/attendance records led by this faculty
+        sessions = AttendanceSession.query.filter_by(faculty_id=faculty_id).all()
+        for s in sessions:
+            AttendanceRecord.query.filter_by(session_id=s.id).delete()
+            db.session.delete(s)
+        db.session.delete(faculty)
+        db.session.commit()
+        flash(f"Faculty {faculty.name} deleted with all related sessions and assignments.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Error deleting faculty: " + str(e), "error")
+    return redirect(url_for('admin.admin_dashboard'))
+
+# Delete student (also cleans files and CSV)
 @admin_bp.route('/delete_student', methods=['POST'])
 def delete_student():
     usn = norm_usn(request.form.get('usn'))
