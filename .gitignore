@@ -32,5 +32,5 @@ Thumbs.db
 .ipynb_checkpoints/
 
 # Configuration and secrets
-config.py
+app/config.py
 *.env
