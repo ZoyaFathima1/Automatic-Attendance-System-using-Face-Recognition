@@ -33,4 +33,5 @@ Thumbs.db
 
 # Configuration and secrets
 app/config.py
+config.example.py
 *.env
